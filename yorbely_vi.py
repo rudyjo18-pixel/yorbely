@@ -1,61 +1,6 @@
 import streamlit as st
 import json
 import os
-import base64
-
-# --- CONFIGURACIÓN DEL FONDO ---
-FONDO_URL = "https://i.imgur.com/ihYjSE8.jpeg" 
-
-def get_base64_of_bin_file(bin_file):
-    with open(bin_file, 'rb') as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
-
-def set_bg_from_url(url):
-    """
-    Inyecta estilos CSS para el fondo y ajusta los contrastes de los textos y cajas.
-    """
-    st.markdown(
-         f"""
-         <style>
-         .stApp {{
-             background-image: url("{url}");
-             background-size: cover;
-             background-position: center;
-             background-repeat: no-repeat;
-             background-attachment: local;
-         }}
-         
-         /* Fondo semitransparente para el contenedor principal para que resalte el texto */
-         .stApp > div {{
-             background-color: rgba(255, 255, 255, 0.85); 
-             padding: 25px;
-             border-radius: 12px;
-         }}
-         
-         /* Forzar color oscuro y negrita para títulos, subtítulos y párrafos */
-         h1, h2, h3, p, label, span, div[data-testid="stMarkdownContainer"] > p {{
-             color: #2C2C2C !important;
-             font-weight: bold !important;
-         }}
-         
-         /* Ajuste para que las cajas de texto sean blancas y legibles */
-         input, textarea {{
-             background-color: #FFFFFF !important;
-             color: #2C2C2C !important;
-         }}
-         
-         /* Fondo de la barra lateral */
-         [data-testid="stSidebar"] {{
-             background-color: rgba(255, 255, 255, 0.9) !important;
-         }}
-         
-         </style>
-         """,
-         unsafe_allow_html=True
-     )
-
-# --- FIN CONFIGURACIÓN FONDO ---
 
 DATA_FILE = "citas_pintura.json"
 
@@ -74,14 +19,22 @@ def guardar_citas(citas):
 
 st.set_page_config(page_title="Citas de Pintura", page_icon="🎨", layout="centered")
 
-# Aplicar el fondo y los estilos mejorados
-set_bg_from_url(FONDO_URL)
+# --- ENCABEZADO CON LOGO EN LA ESQUINA ---
+col1, col2 = st.columns([3, 1])
 
-st.title("🎨 Registro de Citas de Pintura")
-st.write("Hola preciosa, aquí puedes agendar y consultar todas tus ideas y proyectos.")
+with col1:
+    st.title("🎨 Registro de Citas de Pintura")
+    st.write("Hola preciosa, aquí puedes agendar y consultar todas tus ideas y proyectos.")
+
+with col2:
+    # Aquí cargamos la imagen en la esquina derecha del título
+    st.image("https://i.imgur.com/ihYjSE8.jpeg", use_container_width=True)
+
+st.markdown("---")
 
 fecha_lugar = cargar_citas()
 
+# Menú lateral normal
 menu = st.sidebar.selectbox("Menú de opciones", ["Agendar Cita", "Consultar Citas"])
 
 if menu == "Agendar Cita":
