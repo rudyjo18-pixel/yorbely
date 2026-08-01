@@ -2,7 +2,6 @@ import streamlit as st
 import json
 import os
 
-# Nombre del archivo donde se guardarán las citas de forma persistente
 DATA_FILE = "citas_pintura.json"
 
 def cargar_citas():
@@ -26,7 +25,6 @@ st.set_page_config(page_title="Citas de Pintura", page_icon="🎨", layout="cent
 st.title("🎨 Registro de Citas de Pintura")
 st.write("Hola preciosa, aquí puedes agendar y consultar todas tus ideas y proyectos.")
 
-# Cargar los datos actuales almacenados
 fecha_lugar = cargar_citas()
 
 # Crear un menú lateral para elegir entre registrar o consultar
@@ -35,9 +33,9 @@ menu = st.sidebar.selectbox("Menú de opciones", ["Agendar Cita", "Consultar Cit
 if menu == "Agendar Cita":
     st.subheader("Agregar una nueva cita o cuadro")
     
-    # Formulario para que se vea ordenado
+   
     with st.form("form_cita"):
-        descripcion = st.text_input("Descripción de la cita / Idea del cuadro:")
+        descripcion = st.text_input("Descripción de la cita: ")
         fecha = st.date_input("Fecha de la cita:")
         lugar = st.text_input("Lugar:")
         
