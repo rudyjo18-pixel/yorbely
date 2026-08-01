@@ -13,36 +13,41 @@ def get_base64_of_bin_file(bin_file):
 
 def set_bg_from_url(url):
     """
-    Esta función inyecta estilos CSS para poner una imagen de fondo
-    usando una URL pública.
+    Inyecta estilos CSS para el fondo y ajusta los contrastes de los textos y cajas.
     """
     st.markdown(
          f"""
          <style>
          .stApp {{
              background-image: url("{url}");
-             background-size: cover; /* Cubre toda la pantalla */
-             background-position: center; /* Centrada */
+             background-size: cover;
+             background-position: center;
              background-repeat: no-repeat;
              background-attachment: local;
          }}
          
-         /* Hacemos semitransparentes los contenedores de texto */
+         /* Fondo semitransparente para el contenedor principal para que resalte el texto */
          .stApp > div {{
-             background-color: rgba(255, 255, 255, 0.7); /* Fondo blanco con 70% de opacidad */
-             padding: 20px;
-             border-radius: 10px;
+             background-color: rgba(255, 255, 255, 0.85); 
+             padding: 25px;
+             border-radius: 12px;
          }}
          
-         /* Ajustamos el color del título y texto para que resalten */
-         h1, h2, p, label, div[data-testid="stMarkdownContainer"] > p {{
-             color: #4B4B4B;
-             font-weight: bold;
+         /* Forzar color oscuro y negrita para títulos, subtítulos y párrafos */
+         h1, h2, h3, p, label, span, div[data-testid="stMarkdownContainer"] > p {{
+             color: #2C2C2C !important;
+             font-weight: bold !important;
          }}
          
-         /* Ajuste para el selectbox de la barra lateral */
+         /* Ajuste para que las cajas de texto sean blancas y legibles */
+         input, textarea {{
+             background-color: #FFFFFF !important;
+             color: #2C2C2C !important;
+         }}
+         
+         /* Fondo de la barra lateral */
          [data-testid="stSidebar"] {{
-             background-color: rgba(255, 255, 255, 0.8);
+             background-color: rgba(255, 255, 255, 0.9) !important;
          }}
          
          </style>
@@ -52,11 +57,9 @@ def set_bg_from_url(url):
 
 # --- FIN CONFIGURACIÓN FONDO ---
 
-
 DATA_FILE = "citas_pintura.json"
 
 def cargar_citas():
-    """Carga las citas guardadas desde el archivo JSON si existe."""
     if os.path.exists(DATA_FILE):
         try:
             with open(DATA_FILE, "r", encoding="utf-8") as f:
@@ -66,14 +69,12 @@ def cargar_citas():
     return {}
 
 def guardar_citas(citas):
-    """Guarda el diccionario de citas en el archivo JSON."""
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(citas, f, ensure_ascii=False, indent=4)
 
-# Configuración inicial de la página
 st.set_page_config(page_title="Citas de Pintura", page_icon="🎨", layout="centered")
 
-# Aplicar el fondo
+# Aplicar el fondo y los estilos mejorados
 set_bg_from_url(FONDO_URL)
 
 st.title("🎨 Registro de Citas de Pintura")
@@ -81,7 +82,6 @@ st.write("Hola preciosa, aquí puedes agendar y consultar todas tus ideas y proy
 
 fecha_lugar = cargar_citas()
 
-# Crear un menú lateral para elegir entre registrar o consultar
 menu = st.sidebar.selectbox("Menú de opciones", ["Agendar Cita", "Consultar Citas"])
 
 if menu == "Agendar Cita":
@@ -116,12 +116,11 @@ elif menu == "Consultar Citas":
                 st.markdown(f"**📌 {descripcion}**")
                 st.write(f"📅 **Fecha:** {datos['fecha']} | 📍 **Lugar:** {datos['lugar']}")
                 
-                if st.button(f"🗑️ Borrar cita", key=f"btn_{descripcion}"):
-                    if descripcion in fecha_lugar:
-                        del fecha_lugar[descripcion]
-                        guardar_citas(fecha_lugar)
-                        st.success(f"¡Cita borrada: {descripcion}!")
-                        st.rerun()
+                if st.button("🗑️ Borrar cita", key=f"btn_{descripcion}") and descripcion in fecha_lugar:
+                    del fecha_lugar[descripcion]
+                    guardar_citas(fecha_lugar)
+                    st.success(f"¡Cita borrada: {descripcion}!")
+                    st.rerun()
                         
                 st.markdown("---")
         
